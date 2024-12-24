@@ -12,11 +12,13 @@ Write a function that takes an array of integers in which each subsequent value 
 
 ## Function Signatures
 
+### JavaScript
 ```javascript
 // JavaScript
 function sortedSquaredArray(array)
 ```
 
+### Go
 ```go
 // Go
 func SortedSquaredArray(array []int) []int
