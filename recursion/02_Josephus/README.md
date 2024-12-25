@@ -69,4 +69,14 @@ This approach uses recursion to simulate the game.
 *   Time Complexity: O(n) as we recurse n times in the worst case.
 *   Space Complexity: O(n) due to the recursion call stack.
 
+## Approach 2: Iterative Approach (Optimized)
 
+This approach uses a mathematical formula to directly calculate the survivor's position without simulating the game step by step.
+
+1.  Initialize `survivor = 0`. This represents the 0-based index of the survivor.
+2.  Iterate from `i = 2` to `n` (inclusive). `i` represents the current number of people in the circle.
+3.  In each iteration, update the survivor's position using the formula: `survivor = (survivor + k) % i`.
+4.  After the loop, `survivor` holds the 0-based index of the final survivor. Add 1 to convert it to a 1-based index.
+
+*   Time Complexity: O(n) as the loop iterates n-1 times.
+*   Space Complexity: O(1) as we use only constant extra space.
