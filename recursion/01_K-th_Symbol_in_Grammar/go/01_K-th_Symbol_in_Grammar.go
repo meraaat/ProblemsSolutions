@@ -3,20 +3,23 @@ package main
 import "fmt"
 
 func main() {
-	testCases := []map[string]int{
-		{"n": 1, "k": 1},
-		{"n": 2, "k": 1},
-		{"n": 2, "k": 2},
-		{"n": 3, "k": 1},
-		{"n": 3, "k": 2},
-		{"n": 3, "k": 3},
-		{"n": 3, "k": 4},
-		{"n": 4, "k": 5},
-		{"n": 4, "k": 8},
+	testCases := []struct {
+		n int
+		k int
+	}{
+		{1, 1},
+		{2, 1},
+		{2, 2},
+		{3, 1},
+		{3, 2},
+		{3, 3},
+		{3, 4},
+		{4, 5},
+		{4, 8},
 	}
 
 	for i, testcase := range testCases {
-		fmt.Printf("TestCase %v: %v\n", i, KthGrammar(testcase["n"], testcase["k"]))
+		fmt.Printf("TestCase %v: %v\n", i, KthGrammar(testcase.n, testcase.k))
 	}
 }
 
