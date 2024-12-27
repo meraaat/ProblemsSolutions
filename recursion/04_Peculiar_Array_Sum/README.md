@@ -13,6 +13,7 @@ The equivalent value of a peculiar array is the sum of its elements raised to th
 
 ## Function Signatures
 
+### Javascript
 ```javascript
 // JavaScript
 function peculiarArraySum(arr)
