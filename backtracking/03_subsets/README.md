@@ -18,7 +18,7 @@ function subsets(nums)
 ### Go
 ```go
 //Go
-func subsets(nums int[]) [][]int
+func subsets(nums []int) [][]int
 ```
 
 ## Example
