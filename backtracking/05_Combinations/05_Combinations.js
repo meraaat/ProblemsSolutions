@@ -70,4 +70,24 @@ const testCases = [
   });
 })();
 
-function combine(n, k) {}
+function combine(n, k) {
+  let result = [];
+  function helper(start, current) {
+    // Base case
+    if (current.length === k) {
+      result.push([...current]);
+      return;
+    }
+
+    // Recursive case
+    let need = k - current.length;
+    for (let i = start; i <= n - need + 1; i++) {
+      current.push(i);
+      helper(i + 1, current);
+      current.pop();
+    }
+  }
+
+  helper(1, []);
+  return result;
+}
