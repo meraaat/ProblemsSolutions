@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"sort"
 )
 
 func main() {
@@ -33,6 +34,7 @@ func main() {
 
 func subsetsWithDup(nums []int) [][]int {
 	result := [][]int{}
+	sort.Ints(nums)
 
 	var helper func(i int, subsets []int)
 
