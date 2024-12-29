@@ -6,24 +6,27 @@ Given an integer array `nums` of unique elements, return all possible subsets (t
 
 ## Constraints
 
-*   All elements in `nums` are unique.
+* All elements in `nums` are unique.
 
 ## Function Signatures
 
-### Javascript
+### JavaScript
+
 ```javascript
 // JavaScript
 function subsets(nums)
 ```
+
 ### Go
+
 ```go
-//Go
+// Go
 func subsets(nums []int) [][]int
 ```
 
-## Example
+## Examples
 
-```
+```plaintext
 Input: nums = [1, 2, 3]
 Output: [[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]
 
@@ -32,20 +35,31 @@ Output: [[], [0]]
 
 Input: nums = []
 Output: [[]]
-
 ```
 
-## Approach 1: Backtracking
+## Approach: Backtracking
 
-Backtracking is a suitable approach for generating subsets.
+Backtracking is a suitable approach for generating subsets. The idea is to explore each element's inclusion or exclusion in the subset systematically.
 
-1.  **Base Case:** When we've considered all elements in `nums` (reached the end of the input array), the current subset is complete. Add it to the result.
+### Steps:
 
-2.  **Recursive Step:** For each element at index `i` in `nums`, we have two choices:
-    *   **Include the element:** Add `nums[i]` to the current subset and recursively call the function for the next element (`i + 1`).
-    *   **Exclude the element:** Do not add `nums[i]` to the current subset and recursively call the function for the next element (`i + 1`).
+1. **Base Case:**
+   - When we’ve considered all elements in `nums` (reached the end of the input array), the current subset is complete. Add it to the result.
 
-3. Backtracking: After exploring both the include and exclude cases, we remove the last added element from the current subset (if we added it). This is essential to explore other subset combinations.
+2. **Recursive Step:**
+   - For each element at index `i` in `nums`, we have two choices:
+     * **Include the element:** Add `nums[i]` to the current subset and recursively call the function for the next element (`i + 1`).
+     * **Exclude the element:** Do not add `nums[i]` to the current subset and recursively call the function for the next element (`i + 1`).
 
-*   Time Complexity: O(2^n), where n is the length of `nums`. There are 2^n possible subsets.
-*   Space Complexity: O(n) due to the recursion depth. The space to store the output is not included in the space complexity analysis.
+3. **Backtracking:**
+   - After exploring both the include and exclude cases, we remove the last added element from the current subset (if we added it). This ensures that we can explore other subset combinations.
+
+### Complexity Analysis
+
+* **Time Complexity:**
+  - **Big-O:** \( O(2^n) \), where \( n \) is the length of `nums`. There are \( 2^n \) possible subsets, and each subset generation involves constant work.
+
+* **Space Complexity:**
+  - **Big-O:** \( O(n) \) for the recursion depth, as the maximum depth of the call stack is \( n \).
+  - Note: The space required to store the output is \( O(n * 2^n) \), which is not included in the space complexity analysis.
+
