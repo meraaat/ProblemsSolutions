@@ -38,6 +38,7 @@ Output: [
 
 Input: n = 1
 Output: [["Q"]]
+```
 
 ## Approach: Backtracking
 
@@ -65,6 +66,13 @@ To check if a position is safe, we need to check:
 
 ## Complexity Analysis
 
-*   **Time Complexity:** The time complexity is difficult to express precisely. In the worst case, we might explore a large portion of the search space, leading to exponential time complexity. However, the constraints and the pruning from the safety checks significantly reduce the actual time taken.
+*  **Time Complexity:**  O(N!) - For each row (N), we have N choices for the first queen, N-1 for the second, and so on. The safety checks in isValid() take O(N), making the total complexity O(N * N!). While pruning reduces practical runtime, the worst-case remains factorial.
 
-*   **Space Complexity:** O(n^2) to store the board and O(n) for the recursion stack. The output space is proportional to the number of solutions, which can also be significant in some cases.```
+
+*   **Space Complexity:** O(n^2) to store the board and O(n) for the recursion stack. The output space is proportional to the number of solutions, which can also be significant in some cases.
+
+*   **Additional Notes:** 
+For N=8, there are 92 solutions
+Each solution requires N strings of length N
+Actual runtime is significantly better than O(N!) due to early pruning
+Copy
