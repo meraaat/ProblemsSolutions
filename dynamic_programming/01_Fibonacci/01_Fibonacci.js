@@ -48,3 +48,41 @@ function main() {
 }
 
 main(); // Call the main function
+
+// Recursive approach
+function fibRecursive(n) {
+  if (n <= 1) return n;
+  return fibRecursive(n - 1) + fibRecursive(n - 2);
+}
+
+// Memoization (Top-Down DP)
+function fibMemo(n) {
+  const memo = {};
+  function fib(n) {
+    if (n <= 1) return n;
+    if (memo[n] !== undefined) return memo[n];
+    return (memo[n] = fib(n - 1) + fib(n - 2));
+  }
+  return fib(n);
+}
+
+// Tabulation (Bottom-Up DP)
+function fibTab(n) {
+  if (n <= 1) return n;
+  const dp = [0, 1];
+  for (let i = 2; i <= n; i++) {
+    dp[i] = dp[i - 1] + dp[i - 2];
+  }
+  return dp[n];
+}
+
+// Space Optimized
+function fibSpace(n) {
+  if (n <= 1) return n;
+  let a = 0,
+    b = 1;
+  for (let i = 2; i <= n; i++) {
+    [a, b] = [b, a + b];
+  }
+  return b;
+}
