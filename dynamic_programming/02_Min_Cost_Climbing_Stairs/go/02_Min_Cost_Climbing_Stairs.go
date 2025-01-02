@@ -21,6 +21,7 @@ func main() {
 		"Recursive":      minCostClimbingStairsRecursive,
 		"Memoization":    minCostClimbingStairsMemo,
 		"Tabulation":     minCostClimbingStairsTab,
+		"Tabulation2":     minCostClimbingStairsTab2,
 		"SpaceOptimized": minCostClimbingStairsSpace,
 	}
 
@@ -46,45 +47,59 @@ func main() {
 func minCostClimbingStairsRecursive(cost []int) int {
 	n := len(cost)
 
-	
 	var minCost func(int) int
 	minCost = func(i int) int {
-		if i < 0 {
-			return 0 
+		if i >= n {
+			return 0
 		}
-		if i <= 1 {
-			return cost[i]
-		}
-		return cost[i] + int(math.Min(float64(minCost(i-1)), float64(minCost(i-2))))
+		one := cost[i] + minCost(i+1)
+		two := cost[i] + minCost(i+2)
+		return int(math.Min(float64(one), float64(two)))
 	}
-	return int(math.Min(float64(minCost(n-1)), float64(minCost(n-2))))
+	return int(math.Min(float64(minCost(0)), float64(minCost(1))))
 }
 
 // Memoization (Top-Down DP). This has O(n) time complexity and O(n) space complexity.
 func minCostClimbingStairsMemo(cost []int) int {
 	n := len(cost)
-	memo := make(map[int]int) 
+	memo := make(map[int]int)
 
 	var minCost func(int) int
 	minCost = func(i int) int {
-		if i < 0 {
-			return 0 
+
+		if i >= n {
+			return 0
 		}
-		if i <= 1 {
-			return cost[i]
-		}
+
 		if val, ok := memo[i]; ok {
 			return val
 		}
-		memo[i] = cost[i] + int(math.Min(float64(minCost(i-1)), float64(minCost(i-2)))) // Calculate and memoize
+		one := cost[i] + minCost(i+1)
+		two := cost[i] + minCost(i+2)
+		memo[i] = int(math.Min(float64(one), float64(two)))
 		return memo[i]
 	}
-
-	return int(math.Min(float64(minCost(n-1)), float64(minCost(n-2))))
+	return int(math.Min(float64(minCost(0)), float64(minCost(1))))
 }
 
 // Tabulation (Bottom-Up DP). This has O(n) time complexity and O(n) space complexity.
 func minCostClimbingStairsTab(cost []int) int {
+	n := len(cost)
+	// storing the cost for reaching the step with a particular index
+	dp := make([]int, n+1)
+	dp[0] = 0
+	dp[1] = 0
+	for i := 2; i <= n; i++ {
+		costToComeFromOneStepBack := cost[i-1] + dp[i-1]
+		costToComeFromTwoStepBack := cost[i-2] + dp[i-2]
+		dp[i] = int(math.Min(float64(costToComeFromOneStepBack), float64(costToComeFromTwoStepBack)))
+	}
+
+	return dp[n]
+}
+
+// Tabulation (Bottom-Up DP). This has O(n) time complexity and O(n) space complexity. (more efficient)
+func minCostClimbingStairsTab2(cost []int) int {
 	n := len(cost)
 	dp := make([]int, n) 
 	dp[0] = cost[0]     
