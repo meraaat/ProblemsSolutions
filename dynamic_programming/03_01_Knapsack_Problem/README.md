@@ -73,13 +73,19 @@ Memoization optimizes the recursive approach by storing the results of subproble
 
 Tabulation builds the solution iteratively using a 2D DP table. `dp[i][w]` represents the maximum value that can be obtained using items up to index `i` with a maximum weight of `w`.
 
+### 4. Space Optimization (using 1D arrays)
+
+This approach optimizes the tabulation method by using only two 1D arrays (often named `prev` and `curr`) of size `W+1`. This reduces the space complexity to O(W). The `prev` array stores the results from the previous row (item), and the `curr` array stores the results for the current row. After each item is processed, the `prev` and `curr` arrays are swapped to simulate moving down the DP table.
+
 ## Complexity Analysis
 
-| Approach      | Time Complexity | Space Complexity |
-|---------------|-----------------|-----------------|
-| 1. Recursion  | O(2^N)          | O(N)            |
-| 2. Memoization | O(N*W)          | O(N*W)          |
-| 3. Tabulation | O(N*W)          | O(N*W)          |
+| Approach              | Time Complexity | Space Complexity |
+|-----------------------|-----------------|-----------------|
+| 1. Recursion          | O(2^N)          | O(N)            |
+| 2. Memoization        | O(N*W)          | O(N*W)          |
+| 3. Tabulation         | O(N*W)          | O(N*W)          |
+| 4. Space Optimization | O(N*W)          | O(W)            |
 
 *   **Recursion:** Exponential time due to exploring all subsets. O(N) space for the call stack.
 *   **Memoization/Tabulation:** Pseudo-polynomial time complexity O(N*W), as it depends on the value of W. O(N*W) space to store the memo/DP table.
+*   **Space Optimization:** Pseudo-polynomial time complexity O(N*W). O(W) space due to using only two 1D arrays.
