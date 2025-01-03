@@ -2,23 +2,40 @@ package main
 
 import (
 	"fmt"
-	"math"
 )
 
 // Recursive (Naive)
 func knapsackRecursive(W int, wt []int, val []int, n int) int {
-	if n == 0 || W == 0 {
-		return 0
+
+	var helper func(int, int) int
+	helper = func(index, remWeight int) int {
+		// Base case: No items left or no capacity remaining
+		if index >= n || remWeight == 0 {
+			return 0
+		}
+
+		// Recursive case
+		exclude := helper(index+1, remWeight)
+		include := 0
+
+		if wt[index] <= remWeight {
+			include = val[index] + helper(index+1, remWeight-wt[index])
+		}
+
+		if include > exclude {
+			return include
+		}
+
+		return exclude
 	}
-	if wt[n-1] > W {
-		return knapsackRecursive(W, wt, val, n-1)
-	}
-	return int(math.Max(float64(val[n-1]+knapsackRecursive(W-wt[n-1], wt, val, n-1)), float64(knapsackRecursive(W, wt, val, n-1))))
+
+	return helper(0, W)
+
 }
 
 // Memoization (Top-Down DP)
 func knapsackMemo(W int, wt []int, val []int, n int) int {
-	memo := make([][]int, n+1)
+	memo := make([][]int, n)
 	for i := range memo {
 		memo[i] = make([]int, W+1)
 		for j := range memo[i] {
@@ -26,22 +43,30 @@ func knapsackMemo(W int, wt []int, val []int, n int) int {
 		}
 	}
 
-	var knap func(W int, n int) int
-	knap = func(W int, n int) int {
-		if n == 0 || W == 0 {
+	var helper func(int, int) int
+	helper = func(index, remWeight int) int {
+		// Base case: No items left or no capacity remaining
+		if index == n || remWeight == 0 {
 			return 0
 		}
-		if memo[n][W] != -1 {
-			return memo[n][W]
+
+		if memo[index][remWeight] != -1 {
+			return memo[index][remWeight]
 		}
-		if wt[n-1] > W {
-			memo[n][W] = knap(W, n-1)
-			return memo[n][W]
+
+		exclude := helper(index+1, remWeight)
+
+		include := 0
+		if wt[index] <= remWeight {
+			include = val[index] + helper(index+1, remWeight-wt[index])
 		}
-		memo[n][W] = int(math.Max(float64(val[n-1]+knap(W-wt[n-1], n-1)), float64(knap(W, n-1))))
-		return memo[n][W]
+
+		// Store the maximum of including or excluding the item
+		memo[index][remWeight] = max(include, exclude)
+		return memo[index][remWeight]
 	}
-	return knap(W, n)
+
+	return helper(0, W)
 }
 
 // Tabulation (Bottom-Up DP)
@@ -51,18 +76,40 @@ func knapsackTab(W int, wt []int, val []int, n int) int {
 		dp[i] = make([]int, W+1)
 	}
 
-	for i := 0; i <= n; i++ {
-		for w := 0; w <= W; w++ {
-			if i == 0 || w == 0 {
-				dp[i][w] = 0
-			} else if wt[i-1] <= w {
-				dp[i][w] = int(math.Max(float64(val[i-1]+dp[i-1][w-wt[i-1]]), float64(dp[i-1][w])))
-			} else {
-				dp[i][w] = dp[i-1][w]
+	for i := 1; i <= n; i++ {
+		for w := 1; w <= W; w++ {
+			exclude := dp[i-1][w]
+
+			include := 0
+			if wt[i-1] <= w {
+				include = val[i-1] + dp[i-1][w-wt[i-1]]
 			}
+
+			dp[i][w] = max(exclude, include)
 		}
 	}
 	return dp[n][W]
+}
+
+// Space Optimized Knapsack
+func knapsackSpaceOptimized(W int, wt []int, val []int, n int) int {
+	prev := make([]int, W+1) // Stores results for the previous row (i-1)
+	curr := make([]int, W+1) // Stores results for the current row (i)
+
+	for i := 1; i <= n; i++ { // Iterate through items
+		for w := 1; w <= W; w++ { // Iterate through weights
+			exclude := prev[w] // Value if we exclude the current item
+
+			include := 0      // Value if we include the current item
+			if wt[i-1] <= w { // Check if the current item's weight fits
+				include = val[i-1] + prev[w-wt[i-1]]
+			}
+
+			curr[w] = max(exclude, include) // Choose the maximum value
+		}
+		prev, curr = curr, prev // Swap prev and curr for the next iteration
+	}
+	return prev[W] // The result is in prev[W] after all iterations
 }
 
 func main() {
@@ -75,15 +122,16 @@ func main() {
 	}{
 		{8, []int{4, 5, 2}, []int{3, 9, 5}, 3, 14},
 		{4, []int{4, 5, 1}, []int{1, 2, 3}, 3, 3},
-		{10, []int{10, 20}, []int{60, 100}, 2, 100},
+		{10, []int{10, 20}, []int{60, 100}, 2, 60},
 		{50, []int{10, 20, 30}, []int{60, 100, 120}, 3, 220},
 		{10, []int{1, 2, 3, 4, 5}, []int{1, 2, 3, 4, 5}, 5, 10}, // Added test case
 	}
 
 	knapsackFuncs := map[string]func(W int, wt []int, val []int, n int) int{
-		"Recursive":   knapsackRecursive,
-		"Memoization": knapsackMemo,
-		"Tabulation":  knapsackTab,
+		"Recursive":      knapsackRecursive,
+		"Memoization":    knapsackMemo,
+		"Tabulation":     knapsackTab,
+		"SpaceOptimized": knapsackSpaceOptimized,
 	}
 
 	for name, knapsackFunc := range knapsackFuncs {
@@ -102,4 +150,12 @@ func main() {
 		}
 		fmt.Println("--------------------")
 	}
+}
+
+// Utility function to find the maximum of two integers
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
 }
