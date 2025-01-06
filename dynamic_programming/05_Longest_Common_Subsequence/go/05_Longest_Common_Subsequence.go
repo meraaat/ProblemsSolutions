@@ -15,9 +15,33 @@ func longestCommonSubsequenceRecursive(text1 string, text2 string) int {
 		if text1[i] == text2[j] {
 			return 1 + lcs(i-1, j-1)
 		}
-		return int(math.Max(float64(lcs(i-1, j)), float64(lcs(i, j-1))))
+		return max(lcs(i-1, j), lcs(i, j-1))
 	}
 	return lcs(len(text1)-1, len(text2)-1)
+}
+
+func longestCommonSubsequenceRecursive2(text1, text2 string) int {
+
+	n := len(text1)
+	m := len(text2)
+
+	var helper func(int, int) int
+	helper = func(index1, index2 int) int {
+
+		// Base case
+		if index1 >= n || index2 >= m {
+			return 0
+		}
+
+		// Recursive case
+		if text1[index1] == text2[index2] {
+			return 1 + helper(index1+1, index2+1)
+		}
+
+		return max(helper(index1+1, index2), helper(index1, index2+1))
+	}
+
+	return helper(0, 0)
 }
 
 // Memoization
@@ -48,25 +72,62 @@ func longestCommonSubsequenceMemo(text1 string, text2 string) int {
 	return lcs(len(text1)-1, len(text2)-1)
 }
 
-// Tabulation
-func longestCommonSubsequenceTab(text1 string, text2 string) int {
-	m := len(text1)
-	n := len(text2)
-	dp := make([][]int, m+1)
-	for i := range dp {
-		dp[i] = make([]int, n+1)
+func longestCommonSubsequenceMemo2(text1, text2 string) int {
+	n := len(text1)
+	m := len(text2)
+
+	memo := make([][]int, n)
+	for i := range memo {
+		memo[i] = make([]int, m)
+		for j := range memo[i] {
+			memo[i][j] = -1
+		}
 	}
 
-	for i := 1; i <= m; i++ {
-		for j := 1; j <= n; j++ {
+	var helper func(int, int) int
+	helper = func(index1, index2 int) int {
+
+		// Base case
+		if index1 >= n || index2 >= m {
+			return 0
+		}
+
+		if memo[index1][index2] != -1 {
+			return memo[index1][index2]
+		}
+
+		// Recursive case
+		if text1[index1] == text2[index2] {
+			memo[index1][index2] = 1 + helper(index1+1, index2+1)
+		} else {
+			memo[index1][index2] = max(helper(index1+1, index2), helper(index1, index2+1))
+		}
+
+		return memo[index1][index2]
+	}
+
+	return helper(0, 0)
+}
+
+// Tabulation
+func longestCommonSubsequenceTab(text1 string, text2 string) int {
+	n := len(text1)
+	m := len(text2)
+	dp := make([][]int, n+1)
+	for i := range dp {
+		dp[i] = make([]int, m+1)
+	}
+
+	for i := 1; i <= n; i++ {
+		for j := 1; j <= m; j++ {
 			if text1[i-1] == text2[j-1] {
-				dp[i][j] = dp[i-1][j-1] + 1
+				dp[i][j] = 1 + dp[i-1][j-1]
 			} else {
-				dp[i][j] = int(math.Max(float64(dp[i-1][j]), float64(dp[i][j-1])))
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
 			}
 		}
 	}
-	return dp[m][n]
+	return dp[n][m]
 }
 
 // Space Optimized
@@ -87,12 +148,20 @@ func longestCommonSubsequenceSpace(text1 string, text2 string) int {
 			if text1[i-1] == text2[j-1] {
 				curr[j] = prev[j-1] + 1
 			} else {
-				curr[j] = int(math.Max(float64(prev[j]), float64(curr[j-1])))
+				curr[j] = max(prev[j], curr[j-1])
 			}
 		}
 		prev, curr = curr, prev
 	}
 	return prev[n]
+}
+
+func max[T int | float32](a, b T) T {
+	if a > b {
+		return a
+	}
+
+	return b
 }
 
 func main() {
@@ -113,7 +182,9 @@ func main() {
 
 	lcsFuncs := map[string]func(string, string) int{
 		"Recursive":      longestCommonSubsequenceRecursive,
+		"Recursive2":     longestCommonSubsequenceRecursive2,
 		"Memoization":    longestCommonSubsequenceMemo,
+		"Memoization2":   longestCommonSubsequenceMemo2,
 		"Tabulation":     longestCommonSubsequenceTab,
 		"SpaceOptimized": longestCommonSubsequenceSpace,
 	}
