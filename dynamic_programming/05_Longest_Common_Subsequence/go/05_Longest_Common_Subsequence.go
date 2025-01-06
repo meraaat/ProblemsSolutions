@@ -156,12 +156,21 @@ func longestCommonSubsequenceSpace(text1 string, text2 string) int {
 	return prev[n]
 }
 
-func max[T int | float32](a, b T) T {
-	if a > b {
-		return a
+func max[T ~int | ~float32](nums ...T) T {
+
+	if len(nums) == 0 {
+		var zero T
+		return zero
 	}
 
-	return b
+	maximum := nums[0]
+
+	for i := range nums {
+		if nums[i] > maximum {
+			maximum = nums[i]
+		}
+	}
+	return maximum
 }
 
 func main() {
