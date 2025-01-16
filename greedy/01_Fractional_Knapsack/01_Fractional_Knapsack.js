@@ -1,3 +1,21 @@
+function fractionalKnapsackSimple(W, arr, n) {
+  // [profit, weight]
+  arr.sort((a, b) => b[0] / b[1] - a[0] / a[1]);
+
+  let remainingWeight = W;
+  let value = 0;
+
+  for (let i = 0; i < n; i++) {
+    if (remainingWeight === 0) break;
+    let weight = Math.min(remainingWeight, arr[i][1]);
+
+    remainingWeight -= weight;
+    value += (arr[i][0] / arr[i][1]) * weight;
+  }
+
+  return weight;
+}
+
 function fractionalKnapsack(W, items) {
   const n = items.length;
   if (n === 0 || W === 0) {

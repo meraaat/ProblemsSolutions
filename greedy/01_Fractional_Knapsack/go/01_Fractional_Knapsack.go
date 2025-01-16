@@ -2,46 +2,36 @@ package main
 
 import (
 	"fmt"
+	"math"
 	"sort"
 )
 
-type Item struct {
-	Profit float64
-	Weight float64
-	Ratio  float64
-}
-
-func fractionalKnapsack(W float64, items [][]int) float64 {
-	n := len(items)
+func fractionalKnapsackSimple(W float64, arr [][]int) float64 {
+	n := len(arr)
 	if n == 0 || W == 0 {
 		return 0
 	}
 
-	itemStructs := make([]Item, n)
-	for i := 0; i < n; i++ {
-		itemStructs[i] = Item{Profit: float64(items[i][0]), Weight: float64(items[i][1])}
-		itemStructs[i].Ratio = itemStructs[i].Profit / itemStructs[i].Weight
-	}
-
-	sort.Slice(itemStructs, func(i, j int) bool {
-		return itemStructs[i].Ratio > itemStructs[j].Ratio
+	sort.Slice(arr, func(i, j int) bool {
+		return float64(arr[j][0])/float64(arr[j][1]) > float64(arr[i][0])/float64(arr[i][1]) // Corrected
 	})
 
-	totalProfit := 0.0
 	remainingWeight := W
+	value := 0.0
 
-	for _, item := range itemStructs {
-		if item.Weight <= remainingWeight {
-			totalProfit += item.Profit
-			remainingWeight -= item.Weight
-		} else {
-			totalProfit += (remainingWeight / item.Weight) * item.Profit
-			remainingWeight = 0
+	for i := range arr {
+		if remainingWeight == 0 {
 			break
 		}
+
+		weightTaken := math.Min(remainingWeight, float64(arr[i][1]))
+
+		value += (float64(arr[i][0]) / float64(arr[i][1])) * weightTaken // Corrected: +=
+
+		remainingWeight -= weightTaken
 	}
 
-	return totalProfit
+	return value
 }
 
 func main() {
@@ -57,17 +47,20 @@ func main() {
 		{0, [][]int{{10, 5}}, 0},
 		{50, [][]int{{60, 10}, {100, 20}, {120, 30}}, 240},
 		{10, [][]int{{10, 5}, {1, 1}}, 11},
+		{30, [][]int{{60, 10}, {100, 20}, {120, 30}}, 160},
+		{5, [][]int{{60, 10}, {100, 20}, {120, 30}}, 30},
+		{20, [][]int{{60, 10}, {50, 20}, {100, 30}}, 110}, // New test case
 	}
 
 	for i, tc := range testCases {
 		fmt.Printf("Test Case %d: W=%.0f, items=%v\n", i+1, tc.W, tc.items)
-		res := fractionalKnapsack(tc.W, tc.items)
+		res := fractionalKnapsackSimple(tc.W, tc.items)
 		fmt.Printf("Got: %.2f\n", res)
 		fmt.Printf("Expected: %.2f\n", tc.expect)
-		if res != tc.expect {
-			fmt.Println("FAIL")
-		} else {
+		if math.Abs(res-tc.expect) < 0.0001 {
 			fmt.Println("PASS")
+		} else {
+			fmt.Println("FAIL")
 		}
 		fmt.Println()
 	}
