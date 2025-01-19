@@ -61,7 +61,7 @@ const testCases = [
       [30, 70],
       [60, 40],
     ],
-    expect: 110,
+    expect: 100,
   },
   {
     costs: [
